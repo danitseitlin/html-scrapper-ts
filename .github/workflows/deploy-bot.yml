@@ -1,6 +1,6 @@
 name: Deployment BOT
 on:
-  pull_request: 
+  push: 
     branches: [master]
 jobs:
   build:
@@ -19,5 +19,3 @@ jobs:
         main_pkg_manager: npm
         npm_access_token: ${{secrets.NPM_AUTH_TOKEN}}
         github_access_token: ${{secrets.G_AUTH_TOKEN}}
-        debug: true
-        dry_run: true
