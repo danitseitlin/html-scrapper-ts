@@ -18,6 +18,7 @@
     <img src='https://img.shields.io/badge/license-BSD%203%20Clause-blue.svg?style=plastic' target='_blank' />
   </a>
 </p></p>
+
 ## A small tool to scrap HTML using Typescript!
 
 ### Installation
