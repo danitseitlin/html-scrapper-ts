@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "mocha -r ts-node/register",
-    "unit-tests": "npm run test .\tests\test.ts"
+    "unit-tests": "npm run test ./tests/test.ts"
   },
   "repository": {
     "type": "git",
