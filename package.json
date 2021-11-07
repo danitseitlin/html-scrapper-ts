@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danitseitlin/html-scrapper-js.git"
+    "url": "git+https://github.com/danitseitlin/html-scrapper-ts.git"
   },
   "author": "Dani Tseitlin",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/danitseitlin/html-scrapper-js/issues"
+    "url": "https://github.com/danitseitlin/html-scrapper-ts/issues"
   },
-  "homepage": "https://github.com/danitseitlin/html-scrapper-js#readme",
+  "homepage": "https://github.com/danitseitlin/html-scrapper-ts#readme",
   "devDependencies": {
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
