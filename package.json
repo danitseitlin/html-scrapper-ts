@@ -1,6 +1,6 @@
 {
   "name": "html-scrapper-ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A HTML scrapping tool written in Typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
