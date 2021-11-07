@@ -61,12 +61,12 @@ export class HTML {
     }
 
     /**
-     * Retrieving an element from the list of elements by filter
+     * Retrieving elements from the list of elements by filter
      * @param element The name of the element. The actual type, i.e. "h1"
      * @param properties A list of element properties to filter by
      * @returns A list of elements
      */
-    getElement(element: string, properties?: Property[]): Element[] {
+    getElements(element: string, properties?: Property[]): Element[] {
         let elements: Element[] = this.elements[element] ?? [];
         for(const p of properties) {
             elements = elements.filter(element => element[p.name] === p.value);
