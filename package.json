@@ -1,7 +1,7 @@
 {
   "name": "html-scrapper-ts",
   "version": "0.0.2",
-  "description": "",
+  "description": "A scrapping tool ",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
