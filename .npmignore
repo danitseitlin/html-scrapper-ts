@@ -1,3 +1,4 @@
-tests/**
-tests
+lib/tests/**
+tests/
 index.ts
+src/
