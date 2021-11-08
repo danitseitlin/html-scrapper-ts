@@ -67,6 +67,11 @@ export class HTML {
         return this
     }
 
+    /**
+     * Scrapping Elements from HTML
+     * @param givenHtml The given HTML
+     * @returns A list of elements
+     */
     private scrapeElementsFromHtml(givenHtml: string): {[key: string]: Element[]} {
         let html = givenHtml
                 .replace(/\\n/g, '').replace(/\\t/g, '').replace(/\\r/g, '')
@@ -225,6 +230,6 @@ export const supportedElements = ['h1','tr', 'td', 'input'];
 export const supportedPropertiesWithValue = ['type', 'value', 'style', 'id'];
 
 /**
- * The supported properties that don't have an `=` sign
+ * The supported properties that don't have an '=' sign
  */
 export const supportedPropertiesWithoutValue = ['checked']
