@@ -232,7 +232,7 @@ export const supportedElements = ['h1', 'tr', 'td', 'input', 'select', 'option']
 /**
  * The supported properties that have an '=' sign
  */
-export const supportedPropertiesWithValue = ['type', 'value', 'id'];
+export const supportedPropertiesWithValue = ['type', 'value', 'id', 'class'];
 
 /**
  * The supported properties that don't have an '=' sign
