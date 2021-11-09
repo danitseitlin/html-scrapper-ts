@@ -134,13 +134,14 @@ export class HTML {
                 propertyHtml = propertyHtml.slice(startOfPropertyIndex + startOfPropertyValue.length);
                 const endOfPropertyValue1='" ';
                 const endOfPropertyValue2 = '">';
+                const endOfPropertyValue3 = '"';
                 const endOfPropertyIndex1 = propertyHtml.indexOf(endOfPropertyValue1);
                 const endOfPropertyIndex2 = propertyHtml.indexOf(endOfPropertyValue2);
+                const endOfPropertyIndex3 = propertyHtml.indexOf(endOfPropertyValue3);
                 const endOfPropertyIndex = endOfPropertyIndex1 > -1 && endOfPropertyIndex2 > -1 ?
-                    Math.min(endOfPropertyIndex1, endOfPropertyIndex2): endOfPropertyIndex2 === -1 ? 
-                    endOfPropertyIndex1: endOfPropertyIndex2;
+                    Math.min(endOfPropertyIndex1, endOfPropertyIndex2): endOfPropertyIndex2 === -1 && endOfPropertyIndex1 > -1 ? 
+                    endOfPropertyIndex1: endOfPropertyIndex3;
                 const value = propertyHtml.slice(0, endOfPropertyIndex);
-                //propertyHtml = propertyHtml.slice(endOfPropertyIndex + Math.max(endOfPropertyValue1.length, endOfPropertyValue2.length));
                 elementObject[p] = value;
             }
         }
@@ -227,7 +228,7 @@ export type Element = {
 /**
  * The supported elements of the scrapper
  */
-export const supportedElements = ['h1', 'tr', 'td', 'input', 'select', 'option'];
+export const supportedElements = ['table', 'h1', 'tr', 'td', 'input', 'select', 'option'];
 
 /**
  * The supported properties that have an '=' sign
@@ -237,4 +238,4 @@ export const supportedPropertiesWithValue = ['type', 'value', 'id', 'class'];
 /**
  * The supported properties that don't have an '=' sign
  */
-export const supportedPropertiesWithoutValue = ['checked']
+export const supportedPropertiesWithoutValue = ['checked', 'selected']
