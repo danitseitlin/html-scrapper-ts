@@ -9,69 +9,59 @@ export class HTML {
      * @returns The instance of this object
      */
     private scrape(): this {
-        let html = this.html;
-        const htmlStartIndex = html.indexOf('<body>');
-        html = html.slice(htmlStartIndex);
-        html = html
-                .replace(/\\n/g, '').replace(/\\t/g, '').replace(/\\r/g, '')
-                .replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '')
-                .replace(/\s\s+/g, ' ');
+        let html = this.pritifyHtml(this.html);
+        const htmlStartIndex = html.indexOf('<body>') + '<body>'.length+1;
+        const htmlEndIndex = html.indexOf('</body>');
+        html = html.slice(htmlStartIndex, htmlEndIndex);
         //As long as there is an element in general;
         while(html.indexOf('<') > -1) {
             const elementSigStartIndex = html.indexOf('<');
-            const elementSigEndIndex = html.indexOf('>');
+            let elementSigEndIndex = html.indexOf('>');
             const elementSignature = html.slice(elementSigStartIndex, elementSigEndIndex+1);
             const elementProperties = elementSignature.split(' ');
             
-            const elementName = elementProperties[0].replace('<', '').replace('>', '');
-            if(!elementName.startsWith('</') && supportedElements.indexOf(elementName) > -1) {
+            let elementName = elementProperties[0]//.replace('<', '').replace('>', '');
+            const isClosingElementTag = elementName.indexOf('</') > -1;
+            elementName = elementName.replace('<', '').replace('</', '').replace('>', '');
+            if(!isClosingElementTag && supportedElements.indexOf(elementName) > -1) {
                 const elementObj: Element = {
                     name: elementName
                 }
-                for(let i = 1; i < elementProperties.length; i++) {
-                    const propertyItem = elementProperties[i];
-                    if(propertyItem.indexOf('=') > -1) {
-                        const splitProperty = propertyItem.split('=');
-                        const propName = splitProperty[0];
-                        let propValue = splitProperty[1].replace('>', '');
-                        if(
-                            (propValue.startsWith('"') && propValue.endsWith('"')) || 
-                            (propValue.startsWith("'") && propValue.endsWith("'"))) 
-                        {
-                            propValue = propValue.slice(1, -1);
-                        }
-                        elementObj[propName] = propValue
-                    }
-                    else {
-                        elementObj[propertyItem] = true
-                    }
-                }
+                this.updateElementProperties(elementProperties.slice(1).join(' '), elementObj);
                 const cutHtml = html.slice(elementSigEndIndex+1);
-                const closingTagStartIndex = cutHtml.indexOf(`</${elementName}>`);
+                let closingTagStartIndex = cutHtml.indexOf(`</${elementName}>`);
                 const openingTagStartIndex = cutHtml.indexOf(`<${elementName}`);
                 //if this tag has a closing and it does not have another tag in the html of this kind.
                 if(openingTagStartIndex === -1 && closingTagStartIndex > -1) {
                     const content = cutHtml.slice(0, closingTagStartIndex);
-                    elementObj.content = content.replace(/\r?\n|\r/g, '').trim();
+                    elementObj.content = content.replace(/\\t/g, '').trim();
                     elementObj.childs = this.scrapeElementsFromHtml(elementObj.content);
+                    elementSigEndIndex = closingTagStartIndex
                 }
                 else if(openingTagStartIndex > -1 && closingTagStartIndex > -1 && closingTagStartIndex < openingTagStartIndex) {
                     const content = cutHtml.slice(0, closingTagStartIndex);
-                    elementObj.content = content.replace(/\r?\n|\r/g, '').trim();
+                    elementObj.content = content.replace(/\\t/g, '').trim();
                     elementObj.childs = this.scrapeElementsFromHtml(elementObj.content);
+                    elementSigEndIndex = closingTagStartIndex
+                }
+                else {
+                    elementObj.content = null;
+                    elementObj.childs = null;
                 }
                 this.addElement(elementObj);
             }
             html = html.slice(elementSigEndIndex+1);
         }
-        return this
+        return this;
     }
 
+    /**
+     * Scrapping Elements from HTML
+     * @param givenHtml The given HTML
+     * @returns A list of elements
+     */
     private scrapeElementsFromHtml(givenHtml: string): {[key: string]: Element[]} {
-        let html = givenHtml
-                .replace(/\\n/g, '').replace(/\\t/g, '').replace(/\\r/g, '')
-                .replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '')
-                .replace(/\s\s+/g, ' ');
+        let html = this.pritifyHtml(givenHtml);
         const elementsObj = {};
         //As long as there is an element in general;
         while(html.indexOf('<') > -1) {
@@ -114,28 +104,49 @@ export class HTML {
     }
 
     /**
+     * Pritifying HTML
+     * @param html The html to pritify
+     * @returns Pritified HTML
+     */
+    private pritifyHtml(html: string): string {
+        return html
+            .replace(/\\n/g, '').replace(/\\t/g, '').replace(/\\r/g, '')
+            .replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '')
+            .replace(/\s\s+/g, ' ');
+    }
+
+    /**
      * Updating the element properties inside a given obj
      * @param html The html of the element
      * @param elementObject The element object
      */
     private updateElementProperties(html: string, elementObject: Element): void {
-        let cutHtml = html;
+        const endOfPropertyHtmlIndex = html.indexOf('>')
+        let elementHtml = html.slice(0, endOfPropertyHtmlIndex+1);
         for(const p of supportedPropertiesWithValue){
             const propertyStartValue = `${p}=`;
-            const propertyExists = cutHtml && cutHtml !== '' ? cutHtml.indexOf(propertyStartValue) > -1: false;
+            const propertyExists = elementHtml && elementHtml !== '' ? elementHtml.indexOf(propertyStartValue) > -1: false;
             if(propertyExists){
-                let valueStartIndex = cutHtml.indexOf(propertyStartValue) + propertyStartValue.length;
-                cutHtml = cutHtml.slice(valueStartIndex);
-                const firstQuotationMark = cutHtml.indexOf('"');
-                cutHtml = cutHtml.slice(firstQuotationMark+1);
-                const secondQuotationMark = cutHtml.indexOf('"');
-                const value = cutHtml.slice(0, secondQuotationMark);
-                cutHtml = cutHtml.slice(secondQuotationMark+1);
+                let valueStartIndex = elementHtml.indexOf(propertyStartValue) + propertyStartValue.length;
+                let propertyHtml = elementHtml.slice(valueStartIndex-1);
+                const startOfPropertyValue = '="';
+                const startOfPropertyIndex = propertyHtml.indexOf(startOfPropertyValue);
+                propertyHtml = propertyHtml.slice(startOfPropertyIndex + startOfPropertyValue.length);
+                const endOfPropertyValue1='" ';
+                const endOfPropertyValue2 = '">';
+                const endOfPropertyValue3 = '"';
+                const endOfPropertyIndex1 = propertyHtml.indexOf(endOfPropertyValue1);
+                const endOfPropertyIndex2 = propertyHtml.indexOf(endOfPropertyValue2);
+                const endOfPropertyIndex3 = propertyHtml.indexOf(endOfPropertyValue3);
+                const endOfPropertyIndex = endOfPropertyIndex1 > -1 && endOfPropertyIndex2 > -1 ?
+                    Math.min(endOfPropertyIndex1, endOfPropertyIndex2): endOfPropertyIndex2 === -1 && endOfPropertyIndex1 > -1 ? 
+                    endOfPropertyIndex1: endOfPropertyIndex3;
+                const value = propertyHtml.slice(0, endOfPropertyIndex);
                 elementObject[p] = value;
             }
         }
         for(const p of supportedPropertiesWithoutValue) {
-            const propertyExists = cutHtml && cutHtml !== '' ? cutHtml.indexOf(p) > -1: false;
+            const propertyExists = elementHtml && elementHtml !== '' ? elementHtml.indexOf(p) > -1: false;
             if(propertyExists){
                 elementObject[p] = true;
             }
@@ -172,10 +183,10 @@ export class HTML {
     /**
      * Retrieving elements from the list of elements by filter
      * @param element The name of the element. The actual type, i.e. "h1"
-     * @param properties A list of element properties to filter by
+     * @param properties A list of element properties to filter by. Default: [] (empty array)
      * @returns A list of elements
      */
-    getElements(element: string, properties?: Property[]): Element[] {
+    getElements(element: string, properties: Property[] = []): Element[] {
         let elements: Element[] = this.elements[element] ?? [];
         for(const p of properties) {
             elements = elements.filter(element => element[p.name] === p.value);
@@ -217,14 +228,14 @@ export type Element = {
 /**
  * The supported elements of the scrapper
  */
-export const supportedElements = ['h1','tr', 'td', 'input'];
+export const supportedElements = ['table', 'h1', 'tr', 'td', 'input', 'select', 'option'];
 
 /**
  * The supported properties that have an '=' sign
  */
-export const supportedPropertiesWithValue = ['type', 'value', 'style', 'id'];
+export const supportedPropertiesWithValue = ['type', 'value', 'id', 'class'];
 
 /**
- * The supported properties that don't have an `=` sign
+ * The supported properties that don't have an '=' sign
  */
-export const supportedPropertiesWithoutValue = ['checked']
+export const supportedPropertiesWithoutValue = ['checked', 'selected']
