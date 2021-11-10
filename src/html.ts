@@ -10,8 +10,10 @@ export class HTML {
      */
     private scrape(): this {
         let html = this.pritifyHtml(this.html);
-        const htmlStartIndex = html.indexOf('<body>') + '<body>'.length+1;
-        const htmlEndIndex = html.indexOf('</body>');
+        const htmlStartOpeningTag = '<body>';
+        const htmlStartClosingTag = '</body>';
+        const htmlStartIndex = html.indexOf(htmlStartOpeningTag) + htmlStartOpeningTag.length;
+        const htmlEndIndex = html.indexOf(htmlStartClosingTag);
         html = html.slice(htmlStartIndex, htmlEndIndex);
         //As long as there is an element in general;
         while(html.indexOf('<') > -1) {
@@ -20,7 +22,7 @@ export class HTML {
             const elementSignature = html.slice(elementSigStartIndex, elementSigEndIndex+1);
             const elementProperties = elementSignature.split(' ');
             
-            let elementName = elementProperties[0]//.replace('<', '').replace('>', '');
+            let elementName = elementProperties[0];
             const isClosingElementTag = elementName.indexOf('</') > -1;
             elementName = elementName.replace('<', '').replace('</', '').replace('>', '');
             if(!isClosingElementTag && supportedElements.indexOf(elementName) > -1) {
