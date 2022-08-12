@@ -230,12 +230,12 @@ export type Element = {
 /**
  * The supported elements of the scrapper
  */
-export const supportedElements = ['table', 'h1', 'tr', 'td', 'input', 'select', 'option', 'div', 'a'];
+export const supportedElements = ['table', 'tbody', 'thead', 'h1', 'tr', 'td', 'input', 'select', 'option', 'div', 'a'];
 
 /**
  * The supported properties that have an '=' sign
  */
-export const supportedPropertiesWithValue = ['type', 'value', 'id', 'class'];
+export const supportedPropertiesWithValue = ['type', 'value', 'id', 'class', 'style'];
 
 /**
  * The supported properties that don't have an '=' sign
