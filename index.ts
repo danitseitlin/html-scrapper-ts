@@ -1,4 +1,3 @@
 export {
-    HTML, Element, Property, PropertyName, supportedElements, supportedPropertiesWithValue,
-    supportedPropertiesWithoutValue
-} from './src/html';
+    HTMLParser, ElementProperty
+} from "./src/parser";

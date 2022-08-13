@@ -25,9 +25,26 @@
 ```
 npm i --save-dev html-scrapper-ts
 ```
-### Basic usage
+
+### Access all elements by type
 ```
-import { HTML } from 'html-scrapper-ts';
+import { HTMLParser } from 'html-scrapper-ts';
+const file = readFileSync('dir/my-file-path.html');
+const html = new HTML(file.toString());
+const h1Elements = html.elements['H1'];
+```
+
+### Access document functions
+```
+import { HTMLParser } from 'html-scrapper-ts';
+const file = readFileSync('dir/my-file-path.html');
+const html = new HTML(file.toString());
+const elements = html.document.querySelector('tr')
+```
+
+### getElements 
+```
+import { HTMLParser } from 'html-scrapper-ts';
 const file = readFileSync('dir/my-file-path.html');
 const htmlAsString = "<html><body><h1>Title!</h1></body></html>
 const html1 = new HTML(file.toString());
@@ -39,7 +56,7 @@ const allElements = html1.elements;
 const listOfH1 = html1.getElements('h1');
 
 //Filter out by elements and their properties
-const listOfH1WithId = html2.getElements('h1', [{
+const listOfH1WithClass = html2.getElements('h1', [{
     name: 'class',
     value: 'my-special-class'
 }])
