@@ -15,11 +15,18 @@ export class HTMLParser {
         return this._elementsByType;
     }
     
-    private getAllElements() {
+    /**
+     * Returning all elements in the HTML page
+     * @returns HTMLCollectionOf<Element>
+     */
+    private getAllElements(): HTMLCollectionOf<Element> {
         const elements = this.document.getElementsByTagName('*')
         return elements;
     }
 
+    /**
+     * Updating the class with the list of all elements categorized by tag name.
+     */
     private parseElementsByTagName() {
         const elements = this.getAllElements();
         for(const el of elements) {
@@ -30,6 +37,9 @@ export class HTMLParser {
         }
     }
 
+    /**
+     * Parsing the HTML
+     */
     private parse() {
         this.parseElementsByTagName()
     }
@@ -50,8 +60,8 @@ export class HTMLParser {
 }
 
 /**
- * The property object
- * @param name The name of the property. i.e. "id"
+ * The element property object
+ * @param name The name of the property. i.e. "id", "class", "test-id"
  * @param value The value of the property
  */
 export type ElementProperty = {
